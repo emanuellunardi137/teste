@@ -16,7 +16,7 @@ RESET="\e[0m"
 BOLD="\e[1m"
 
 # Obter a versão automaticamente
-VERSION=$(git ls-remote --tags https://github.com/rtenorioh/Press-Ticket.git | awk -F/ '{print $NF}' | sort -V | tail -n1 || echo "unknown")
+VERSION=$(git ls-remote --tags http://github.com/rtenorioh/Press-Ticket.git | awk -F/ '{print $NF}' | sort -V | tail -n1 || echo "unknown")
 
 # Registro do início da execução
 START_TIME=$(date +%s)
@@ -25,9 +25,9 @@ START_TIME=$(date +%s)
 show_usage() {
     echo -e "\n\033[1;33m=== USO DO SCRIPT ===\033[0m"
     echo -e "\033[1mComando:\033[0m"
-    echo -e "  \033[1;32mcurl -sSL https://install.pressticket.com.br | sudo bash -s <SENHA_DEPLOY> <NOME_EMPRESA> <URL_BACKEND> <URL_FRONTEND> <PORT_BACKEND> <PORT_FRONTEND> <DB_PASS> <USER_LIMIT> <CONNECTION_LIMIT> <EMAIL>\033[0m"
+    echo -e "  \033[1;32mcurl -sSL http://install.pressticket.com.br | sudo bash -s <SENHA_DEPLOY> <NOME_EMPRESA> <URL_BACKEND> <URL_FRONTEND> <PORT_BACKEND> <PORT_FRONTEND> <DB_PASS> <USER_LIMIT> <CONNECTION_LIMIT> <EMAIL>\033[0m"
     echo -e "\n\033[1mExemplo:\033[0m"
-    echo -e "  \033[1;32mcurl -sSL https://install.pressticket.com.br | sudo bash -s "senha123" "empresa" "back.pressticket.com.br" "front.pressticket.com.br" 4000 3000 "senha123" 3 10 "email@pressticket.com.br"\033[0m"
+    echo -e "  \033[1;32mcurl -sSL http://install.pressticket.com.br | sudo bash -s "senha123" "empresa" "back.pressticket.com.br" "front.pressticket.com.br" 4000 3000 "senha123" 3 10 "email@pressticket.com.br"\033[0m"
     echo -e "\n\033[1;33m======================\033[0m"
     exit 1
 }
@@ -462,7 +462,7 @@ fi
 
 # Baixando Node.js 20.x
 echo -e "${COLOR}Baixando Node.js 20.x...${RESET}" | tee -a "$LOG_FILE"
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - | tee -a "$LOG_FILE"
+curl -fsSL http://deb.nodesource.com/setup_20.x | sudo -E bash - | tee -a "$LOG_FILE"
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}Node.js 20.x baixado com sucesso.${RESET}" | tee -a "$LOG_FILE"
 else
@@ -570,7 +570,7 @@ fi
 
 # Baixando o Google Chrome
 echo -e "${COLOR}Baixando o Google Chrome...${RESET}" | tee -a "$LOG_FILE"
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb | tee -a "$LOG_FILE"
+wget http://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb | tee -a "$LOG_FILE"
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}Google Chrome baixado com sucesso.${RESET}" | tee -a "$LOG_FILE"
 else
@@ -604,7 +604,7 @@ DEPLOY_HOME=$(eval echo ~deploy)
 
 # Trocar para o usuário deploy e clonar o repositório
 echo -e "${COLOR}Clonando o repositório como o usuário deploy...${RESET}" | tee -a "$LOG_FILE"
-sudo -u deploy -H bash -c "cd $DEPLOY_HOME && git clone --branch $BRANCH https://github.com/rtenorioh/Press-Ticket.git $NOME_EMPRESA" || finalizar "Erro ao clonar o repositório." 1 # Tratamento de erro
+sudo -u deploy -H bash -c "cd $DEPLOY_HOME && git clone --branch $BRANCH http://github.com/rtenorioh/Press-Ticket.git $NOME_EMPRESA" || finalizar "Erro ao clonar o repositório." 1 # Tratamento de erro
 
 echo -e "${COLOR}Alterando proprietário e permissões dos arquivos...${RESET}" | tee -a "$LOG_FILE"
 
@@ -661,11 +661,11 @@ cat <<EOF >"$DEPLOY_HOME/$NOME_EMPRESA/backend/.env"
 NODE_ENV=production
 
 # URLs e Portas
-BACKEND_URL=https://$URL_BACKEND
-FRONTEND_URL=https://$URL_FRONTEND
-WEBHOOK=https://$URL_BACKEND
+BACKEND_URL=http://$URL_BACKEND
+FRONTEND_URL=http://$URL_FRONTEND
+WEBHOOK=http://$URL_BACKEND
 PORT=$PORT_BACKEND
-PROXY_PORT=443
+PROXY_PORT=$PORT_BACKEND
 
 # Caminho do Chrome
 CHROME_BIN=/usr/bin/google-chrome-stable
@@ -818,7 +818,7 @@ sudo -u deploy -H bash -c "cd $DEPLOY_HOME/$NOME_EMPRESA/frontend && cat <<EOF >
 NODE_ENV=production
 
 # URL BACKEND
-REACT_APP_BACKEND_URL=https://$URL_BACKEND
+REACT_APP_BACKEND_URL=http://$URL_BACKEND
 
 # Tempo de encerramento automático dos tickets em horas
 REACT_APP_HOURS_CLOSE_TICKETS_AUTO=
@@ -1028,7 +1028,7 @@ TOTAL_SECONDS=$((TOTAL_TIME % 60))
 # Exibindo resumo da instalação
 echo -e "${BOLD}======== Resumo da Instalação: ========${RESET}" | tee -a "$LOG_FILE"
 echo -e "${GREEN}---------------------------------------${RESET}" | tee -a "$LOG_FILE"
-echo -e "${BOLD}URL de Acesso:${RESET} https://$URL_FRONTEND" | tee -a "$LOG_FILE"
+echo -e "${BOLD}URL de Acesso:${RESET} http://$URL_FRONTEND" | tee -a "$LOG_FILE"
 echo -e "${BOLD}Nome da Instalação:${RESET} $NOME_EMPRESA" | tee -a "$LOG_FILE"
 echo -e "${BOLD}Quantidade de Usuários Permitidos:${RESET} $USER_LIMIT" | tee -a "$LOG_FILE"
 echo -e "${BOLD}Quantidade de Conexões Permitidas:${RESET} $CONNECTION_LIMIT" | tee -a "$LOG_FILE"
